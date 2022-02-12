@@ -383,18 +383,20 @@ if __name__ == '__main__':
         G2 = addEdges(G, k, l, n)
 
         G3 = removeEdges(G, G2, k, l)
+        #G3 = G2.copy()
 
         # Sostituisco nomi nodi con id
-
+        """
         nodes = list(G3.nodes)
         new_name_mapping = dict()
         for i in range(0, len(nodes)):
             new_name_mapping[nodes[i]] = i + 1
 
         G3 = nx.relabel_nodes(G3, new_name_mapping)
-
+        """
         edges = list(G3.edges)
         edges_weight = list(G3.edges.values())
+
 
         #print(G2.edges.data())
 
@@ -406,6 +408,10 @@ if __name__ == '__main__':
                 print(edges[i])
                 count += 1
         print(count)
+
+        print("Delta APL = ", abs(nx.average_shortest_path_length(G3)-nx.average_shortest_path_length(G)))
+        print("Delta ACC = ", abs(nx.average_clustering(G3) - nx.average_clustering(G)))
+        #print("Delta ABC = ", abs(nx.betweenness_centrality(G3) - nx.betweenness_centrality(G)))
 
 
 
