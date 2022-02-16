@@ -281,6 +281,7 @@ if __name__ == '__main__':
         edges_weight = list(G3.edges.values())
 
         count = 0
+        # Stampa degli archi aggiunti dall'algoritmo
         for i in range(0, len(edges)):
             if edges_weight[i]['weight'] >= 0:
                 print(edges[i])
