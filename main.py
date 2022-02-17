@@ -5,16 +5,28 @@ import sys
 import networkx as nx
 
 def addEdges(G, k, l, n):
+    """
+    Funzione che ha il compito di aggiungere gli archi al grafo per anonimizzarlo.
+
+    :param G: Grafo da anonimizzare
+    :param k: Privacy parameter
+    :param l: Privacy parameter
+    :param n: Numero di nodi del grafo
+    :return: Grafo aumentato
+    """
     G2 = G.copy()
     flag = 1
     dist = 1
 
+    # Lista di liste che tiene traccia dei nodi già visitati partendo da ogni nodo di partenza
     node_viewed = list()
+    # Lista di liste che contiene i nodi ad una certa distanza dai vari nodi di partenza
     neig = list()
 
     nodes = list(G.nodes)
 
     if l == 1:
+        # Inizializzazione di node_viewed e neig
         for i in range(0, n):
             node_viewed.append(list(G.adj[nodes[i]]))
             node_viewed[i].append(nodes[i])
@@ -23,6 +35,7 @@ def addEdges(G, k, l, n):
         while flag == 1 and dist < n-1:
             flag = 0
 
+            # Aggiornamento di neig e node_viewd
             for i in range(0, n):
                 actual_neig2 = list()
                 actual_neig = neig[i]
@@ -58,6 +71,7 @@ def addEdges(G, k, l, n):
         for i in range(0, n):
             Ng.append(list(G.adj[nodes[i]]))
 
+        # Inizializzazione di node_viewed e neig
         for i in range(0, n):
             list1 = list()
             list1.append(nodes[i])
@@ -68,6 +82,7 @@ def addEdges(G, k, l, n):
 
         while flag == 1 and dist < n:
             flag = 0
+            # Aggiornamento di neig e node_viewd
             for i in range(0, n):
                 actual_neig2 = list()
                 actual_neig = neig[i]
@@ -86,7 +101,7 @@ def addEdges(G, k, l, n):
 
             for i in range(0, n):
                 Ng_i = Ng[i]
-                v = neig[i]
+                v = neig[i] # lista dei nodi a distanza dist dal nodo i
                 if check_privacy(G2, Ng_i, k):
                     for j in range(0, len(v)):
                         node_1 = v[j]
@@ -106,6 +121,14 @@ def addEdges(G, k, l, n):
     return G2
 
 def check_privacy(G2, Ng_i, k):
+    """
+    Funzione che controlla se tutti i vicini di vi in G condividono almeno k vicini comuni in G2
+
+    :param G2: Grafo aumentato
+    :param Ng_i: Nodi vicini al nodi i
+    :param k: Privacy parameter
+    :return: True se il controllo va a buon fine, False altrimenti.
+    """
     neig_com = list() # Lista di liste dei vicini di Ng_i (vicini di vi)
     for i in range(0, len(Ng_i)):
         neig_com.append(list(G2.adj[Ng_i[i]]))
@@ -131,6 +154,16 @@ def check_privacy(G2, Ng_i, k):
         return True
 
 def removeEdges(G, G2, k, l):
+    """
+    Funzione che ha il compito di rimuovere gli archi aggiunti dalla funzione addEdges che non sono necessari per
+    rendere il grafo finale (k, l)-anonimo
+
+    :param G: Grafo da anonimizzare
+    :param G2: Grafo aumentato
+    :param k: Privacy parameter
+    :param l: Privacy parameter
+    :return: Grafo (k, l)-anonimo
+    """
     G3 = G2.copy()
     # Ordinamento degli archi in base al loro costo
     edges = sorted(G2.edges(data=True), key=lambda t: t[2].get('weight', 1))
@@ -157,6 +190,18 @@ def removeEdges(G, G2, k, l):
     return G3
 
 def isSafe(G, G2, G3, node_1, node_2, k, l):
+    """
+    Funzione che controlla se cancellando l'arco tra nodo_1 e nodo_2 il grafo finale rimane (k, l)-anonimo.
+
+    :param G: Grafo da anonimizzare
+    :param G2: Grafo aumentato
+    :param G3: Grafo finale
+    :param node_1: Nodo ad un estremo dell'arco
+    :param node_2: Nodo ad un estremo dell'arco
+    :param k: Privacy parameter
+    :param l: Privacy parameter
+    :return: True se è sicuro cancellare l'arco, False altrimenti
+    """
     Ng_i = list(G.adj[node_1])
     Ng_j = list(G.adj[node_2])
     Ng2_vj = list(G2.adj[node_2])
@@ -190,6 +235,17 @@ def isSafe(G, G2, G3, node_1, node_2, k, l):
 
 
 def check_edge(V_i, minim, k, node_1, G3):
+    """
+    Funzione che controlla se esiste un subset di V_i al massimo minim elementi che contenga node_1 con meno di k
+    vicini comuni
+
+    :param V_i: Insieme che contiene i nodi vicini a vni in G che sono anche vicini di vj in G2
+    :param minim: Grandezza massima del subset che si può considerare
+    :param k: Privacy parameter
+    :param node_1: Nodo che deve ssere presente nei subset che si considerano
+    :param G3: Grafo finale
+    :return: True se la condicione è verificata, False altrimenti
+    """
     # Modifica apportata per provare a correggere l'algoritmo
     if len(V_i) == 1:
         return True
