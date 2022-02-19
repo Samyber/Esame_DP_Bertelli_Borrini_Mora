@@ -122,7 +122,7 @@ def addEdges(G, k, l, n):
 
 def check_privacy(G2, Ng_i, k):
     """
-    Funzione che controlla se tutti i vicini di vi in G condividono almeno k vicini comuni in G2
+    Funzione che controlla se tutti i vicini di vi in G condividono meno di k vicini comuni in G2
 
     :param G2: Grafo aumentato
     :param Ng_i: Nodi vicini al nodi i
