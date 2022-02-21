@@ -310,6 +310,9 @@ if __name__ == '__main__':
                     if node_to_add not in G:
                         G.add_node(node_to_add)
                     G.add_edge(start_node, node_to_add)
+        else:
+            print("File path wrong!")
+            sys.exit(1)
 
         nx.set_edge_attributes(G, values=-1, name='weight')
         if not(nx.is_connected(G)):
